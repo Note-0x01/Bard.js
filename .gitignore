@@ -1,0 +1,7 @@
+run.bat
+node_modules/
+files/ffmpeg/
+files/songs/
+files/bard.db
+files/config.json
+public/images/albums/

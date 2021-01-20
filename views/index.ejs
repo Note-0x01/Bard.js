@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Bard.js</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/dropzone.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container-fluid">
+            <div class="row">
+                    <div class="sidebar topgrid shadow-lg">
+                        <h4 class="logo-text"><img class="logo" src="/images/logo.png">Bard.js</h4>
+                        <ul class="navigation noselect">
+                            <li class="navigation-button" id="songs">Songs</li>
+                            <li class="navigation-button" id="upload">Upload</li>
+                            <li class="navigation-button" id="settings">Settings</li>
+                        </ul>
+                        <hr>
+                        <h4 class="playlist-header"> Playlists </h4>
+                        <ul class="playlist" id="playlists">
+                          
+                        </ul>
+                    </div>
+                    <div class="col topgrid content">
+                        <div id="infobar">
+                          <h2 id="albumname">Albums</h2>
+                          <input type="text" id="search" placeholder="Search Song">
+                        </div>
+                        <div id="folder">
+
+                        </div>
+                              
+                        <ul class="navigation" id="files">    
+
+                        </ul>
+                    </div>
+            </div>
+            <%- include('partials/playbar.ejs') %>
+    </div>
+
+    <div id="context-menu-song">
+      <ul class="menu-list noselect">
+        <li class="item" id="addtoplaylist">Add to Playlist
+            <div id="context-menu-listadd">
+                <ul class="menu-list" id="menuplaylist">
+                </ul>
+            </div>
+        </li>
+        <li class="item">Edit</li>
+        <li class="item" id="menudelete">Delete</li>
+        <li class="item">Exit</li>
+      </ul>
+    </div>
+
+    <div id="context-menu-playlist">
+        <ul class="menu-list noselect">
+            <li class="item" id="pldelete">Delete</li>
+            <li class="item">Exit</li>
+          </ul>
+      </div>
+
+    <div class="modal-box" id="playlist-menu">
+      <div class="modal-header">
+        <h4>Playlist</h4>
+      </div>
+      <div>
+        <form id="playlist-mod">
+          <div class="modal-body">
+              <input type="text" class="form-control" placeholder="New playlist" id="playlist-name" autofocus="" style="">
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" id="playlist-save" type="submit">Save</button>
+            <button class="btn-default" id="playlist-close">Close</button>
+          </div>
+        </form>
+      </div>
+      
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="js/socket.io.js"></script>
+    <script src="js/ejs.min.js"></script>
+
+    <script src="js/dropzone.js"></script>
+    <script src="js/bard.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/playbar.js"></script>
+  </body>
+</html>
