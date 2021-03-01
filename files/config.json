@@ -3,5 +3,6 @@
 	"botToken" : "",
 	"defaultGuild" : "",
 	"defaultChannel" : "",
+	"webPortalSecret" : "",
 	"webPortalPass" : ""
 }
