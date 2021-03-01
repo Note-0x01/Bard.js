@@ -1,7 +1,8 @@
 const express = require('express')
+
 const app = express()
 var config = require('./files/config.json');
-
+const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 const db = require('better-sqlite3')('files/bard.db');
@@ -20,6 +21,11 @@ const server = require('http').Server(app);
 const io = require("socket.io")(server);
 
 app.set('view engine', 'ejs')
+app.use(session({
+    secret: config.webPortalSecret,
+	resave: true,
+	saveUninitialized: true
+}))
 app.use(express.static('public'));
 const directoryPath = 'files/songs';
 const artDirectory = "public/images/albums"
@@ -31,13 +37,39 @@ const Bard = new broadcast(config.botToken, config.defaultChannel)
 ================*/
 
 app.get('/', function (req, res) {
-    res.render('index');
+    res.render('login');
+})
+app.get('/index', function (req, res) {
+    if(req.session.loggedin) {
+        res.render('index');
+    } else {
+        res.send('Please login to enter this page.')
+    }
 })
 app.get('/settings', function (req, res) {
-    res.render('settings');
+    if(req.session.loggedin) {
+        res.render('settings');
+    } else {
+        res.send('Please login to enter this page.')
+    }
 })
 app.get('/upload', function (req, res) {
-    res.render('upload');
+    if(req.session.loggedin) {
+        res.render('upload');
+    } else {
+        res.send('Please login to enter this page.')
+    }
+})
+
+app.get("/auth", function (req, res) {
+    var password = req.query.password;
+    if(password && password == config.webPortalPass) {
+        req.session.loggedin = true;
+        res.redirect('/index');
+    } else {
+        res.send('Incorrect password!');
+    }
+    res.end()
 })
 
 server.listen(config.port, async function () {
@@ -248,9 +280,6 @@ function songClear(songs) {
             }
         }
 
-        console.log
-
-
         var newSongs = {}
         var i = 0;
         for(item in plsongs) {
@@ -315,8 +344,8 @@ io.on('connection', (socket) => {
         io.emit("songinfo", Bard.song.info)
         io.emit("playing", Bard.playing)
         io.emit("repeat", Bard.repeat)
-        console.log(Bard.song)
-        io.emit("seek", {length: Bard.song.length, current: new Date().getMilliseconds - Bard.startTime})
+        seek_info = {length: Bard.song.length, current: new Date().getMilliseconds - Bard.startTime}
+        io.emit("seek", seek_info)
     });
 
     socket.on('playcontrol', () => {

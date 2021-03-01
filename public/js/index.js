@@ -2,8 +2,8 @@ let playing = false;
 let currentDisplay = "root";
 let currentPlaylist = 0;
 
-let albumimg = [];
-let albumsrc = [];
+let albumimg = {};
+let albumsrc = {};
 
 $(document).keydown(function(event){
     if(event.which=="17")
@@ -39,22 +39,21 @@ function init() {
     $.ajax({
         url:"albums",
         success:function(data){
-            for(let x = 1; x <= data.length+1; x++) {
+            for(let x = 0; x < data.length; x++) {
                 var img;
-                if(imageExists('/images/albums/' + x + '.jpg')) {
+                if(imageExists('/images/albums/' + data[x].id + '.jpg')) {
                     img = $('<img />', { 
-                        src: '/images/albums/' + x + '.jpg',
+                        src: '/images/albums/' + data[x].id + '.jpg',
                     }).addClass("song-browse");
-                    albumsrc.push('/images/albums/' + x + '.jpg')
+                    albumsrc[data[x].id] = '/images/albums/' + data[x].id + '.jpg'
                 } else {
                     img = $('<img />', { 
                         src: '/images/album.png',
                     }).addClass("song-browse");
-                    albumsrc.push('/images/album.png')
+                    albumsrc[data[x].id] = '/images/album.png'
                 }
-                albumimg.push(img)
+                albumimg[data[x].id] = img
             }
-            console.log(albumimg)
             openRoot();
         }
     });
@@ -75,8 +74,7 @@ function openRoot() {
             for(let i = 0; i < data.length; i++) {
                 let img;
                 let src;
-                img = albumimg[data[i].id-1]
-                console.log(data[i].id-1)
+                img = albumimg[data[i].id]
 
                 var li = $('<li/>').addClass("song-list").append($('<a />').append(img).append($('<span/>').text(data[i].name).addClass("song"))).appendTo("#files").bind("contextmenu", function(event){
                     document.getElementById("context-menu-playlist").classList.remove("active");
@@ -113,11 +111,10 @@ function openAlbum(id) {
                 openRoot()
             }).append(root).append($('<span/>').text("Root").addClass("song-list").addClass("noselect").addClass("song")).addClass("song-option").appendTo("#folder");
         
-            console.log(data['album_name'])
             for(let i = 0; i < data.songs.length; i++) {
                 let img;
                 img = $('<img />', { 
-                    src: albumsrc[data.songs[i].album-1]
+                    src: albumsrc[data.songs[i].album]
                 }).addClass("song-browse");
 
                 var li = $('<li/>', {
@@ -219,7 +216,6 @@ function songSelect(data, i, isContext, isList, listID) {
         contextElement.classList.add("active");
         selected[i] = {elementid: "song" + i, song: data.songs[i]}
     }
-    console.log(selected)
 }
 
 function openPlaylist(id) {
@@ -255,7 +251,6 @@ function openPlaylist(id) {
                     contextElement.classList.add("active");
                     songSelect(data, i, true, true, id);
                 }).click(function () {
-                    console.log(data)
                     songSelect(data, i, false, true, id);
                 });
             }
@@ -286,7 +281,6 @@ function playList(index, playlistId) {
 var playlistLock = false
 
 $('#context-menu-listadd').hover(function() {
-    console.log("lock")
     playlistLock = true;
 }, function() {
     var contextElement = document.getElementById("context-menu-listadd");
@@ -299,10 +293,7 @@ $('#addtoplaylist').hover(function() {
     var songMenu = document.getElementById("context-menu-song");
     var contextElement = document.getElementById("context-menu-listadd");
     var maincontext = document.getElementById("context-menu-song");
-    console.log(maincontext.offsetTop + 400)
-    console.log(document.body.clientHeight)
     if(maincontext.offsetTop + 400 > document.body.clientHeight) {
-        console.log(maincontext.offsetTop + 400 - document.body.clientHeight)
         contextElement.style.top = "-" + (maincontext.offsetTop + 400 - document.body.clientHeight) + "px"
     } else {
         contextElement.style.top = "0px"
@@ -312,7 +303,6 @@ $('#addtoplaylist').hover(function() {
     contextElement.classList.add("active");
 }, function() {
     if(!playlistLock) {
-        console.log("fire")
         var contextElement = document.getElementById("context-menu-listadd");
         contextElement.classList.remove("active");
     }
@@ -363,7 +353,6 @@ $('#menudelete').click(function() {
 })
 
 $('#pldelete').click(function() {
-    console.log("contextPlaylist")
     $.ajax({
         url:"deleteplaylist",
         data: {playlist_id: contextPlaylist},
@@ -390,10 +379,9 @@ jQuery('#search').on('input', function() {
                 src: '/images/back.png',
             }).addClass("song-browse")
         
-            console.log(data['album_name'])
             for(let i = 0; i < data.songs.length; i++) {
                 let img = $('<img />', { 
-                    src: albumsrc[data.songs[i].album-1]
+                    src: albumsrc[data.songs[i].album]
                 }).addClass("song-browse");
 
                 var li = $('<li/>', {
@@ -414,7 +402,6 @@ jQuery('#search').on('input', function() {
 });
 /*function navigate(path, up) {
     $("#files").html("");
-    console.log(path)
 
     $.ajax({
         url:"files",
